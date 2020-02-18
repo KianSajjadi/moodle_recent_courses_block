@@ -15,16 +15,11 @@ class block_view_recent_courses extends block_base {
             return $this->content;
         }
 
-        $epoch_course_times = $this->get_course_last_visited_epoch_time();
-        $course_ids = $this->get_most_recent_viewed_course_ids();
-        $course_urls = $this->get_course_urls($course_ids, $epoch_course_times);
-        $renderable = new block_view_recent_courses\output\main();
+        $course_urls = $this->get_course_urls();
+        $renderable = new block_view_recent_courses\output\main($course_urls);
         $renderer = $this->page->get_renderer('block_view_recent_courses');
         $this->content = new stdClass;
-        $this->content = $renderer->render($renderable);
-        $this->footer = ".";
-        var_dump($this->content);
-        var_dump($course_urls);
+        $this->content->text = $renderer->render($renderable);
 
         return $this->content;
     }
@@ -61,8 +56,10 @@ class block_view_recent_courses extends block_base {
 
     }
 
-    private function get_course_urls($course_ids, $epoch_course_times){
-        $course_urls = []; 
+    private function get_course_urls(){
+        $course_urls = [];
+        $course_ids = $this->get_most_recent_viewed_course_ids();
+        $epoch_course_times = $this->get_course_last_visited_epoch_time(); 
 
         if (empty($course_ids)) {
             return [];
@@ -96,7 +93,7 @@ class block_view_recent_courses extends block_base {
         $epoch_course_times = [];
         $records = $DB->get_records('logstore_standard_log', ['eventname' => '\core\event\course_viewed', 'userid' => $USER->id], 'timecreated desc');
         foreach ($records as $record) {
-            if (count($course_times) === 3) {
+            if (count($epoch_course_times) === 3) {
                 return $epoch_course_times;
             }
 
@@ -104,7 +101,7 @@ class block_view_recent_courses extends block_base {
                 continue;
             }
 
-            if (!in_array($record->timecreated, $course_times)) {
+            if (!in_array($record->timecreated, $epoch_course_times)) {
                 $epoch_course_times[] = $record->timecreated;
             }
         }
