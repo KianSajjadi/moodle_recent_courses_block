@@ -5,11 +5,25 @@
 <br>
 <br>
 
-<h2>{{#title}}Title goes here?{{/title}}</h2>
-<div>
-  <br>
-  <ol>
-    <li> {{course_urls}} </li>
-  </ol>
-
+<div id="block-view_recent_courses-{{uniqid}}" class="block-view_recent_courses" data-region="view_recent_courses"
+        data-userid="{{userid}}" data-displaycoursecategory="{{displaycategories}}">
+    <div class="container-fluid p-0">
+        {{> block_recentlyaccessedcourses/recentlyaccessedcourses-view }}
+    </div>
 </div>
+{{#js}}
+require(
+[
+    'jquery',
+    'block_recentlyaccessedcourses/main'
+],
+function(
+    $,
+    Main
+) {
+    var root = $('#block-recentlyaccessedcourses-{{uniqid}}');
+    var userid = root.attr('data-userid');
+
+    Main.init(userid, root);
+});
+{{/js}}

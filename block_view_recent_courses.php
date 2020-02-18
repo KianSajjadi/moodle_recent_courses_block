@@ -15,16 +15,16 @@ class block_view_recent_courses extends block_base {
             return $this->content;
         }
 
-        $renderable = new block_view_recent_courses\output\main();
-        $renderer = $this->page->get_renderer('block_view_recent_courses');
         $epoch_course_times = $this->get_course_last_visited_epoch_time();
         $course_ids = $this->get_most_recent_viewed_course_ids();
         $course_urls = $this->get_course_urls($course_ids, $epoch_course_times);
+        $renderable = new block_view_recent_courses\output\main();
+        $renderer = $this->page->get_renderer('block_view_recent_courses');
         $this->content = new stdClass;
         $this->content = $renderer->render($renderable);
+        $this->footer = ".";
         var_dump($this->content);
-        //$this->content->text = implode('<br>', $course_urls);
-
+        var_dump($course_urls);
 
         return $this->content;
     }
